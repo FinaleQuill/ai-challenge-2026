@@ -1,0 +1,3114 @@
+{
+  "created_at": "2026-10-15T21:17:56.896073+08:00",
+  "purpose": "Read-only CPU original-JPEG preprocessing latency and fidelity probe; active training pipeline was not modified.",
+  "environment": {
+    "python": "3.14.2",
+    "torch": "2.11.0+cu128",
+    "pillow": "12.3.0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "torch_cpu_threads": 4,
+    "gpu_used": false
+  },
+  "methodology": {
+    "split": "valid",
+    "sample_selection": "40 evenly spaced CSV positions including first and last",
+    "image_size": 320,
+    "cache_root": null,
+    "warmup": 3,
+    "repeats_per_image_and_method": 3,
+    "balanced_method_order": "Cyclic offset by image position and repeat",
+    "measurement": "perf_counter wall time around source file read, decode, preprocessing and tensor creation; comparisons excluded",
+    "limitations": [
+      "Local Windows laptop measurements during concurrent training; CPU scheduling contention may affect tail latency.",
+      "OS file cache is warm; measurements are not a cold-disk benchmark.",
+      "No model forward or GPU transfer is measured; T4 single-image end-to-end 100 ms still requires real hardware measurement.",
+      "40 images are a deployment diagnostic sample, not proof of fidelity across the whole dataset."
+    ]
+  },
+  "methods": {
+    "dataset_baseline": "Current CXRDataset(frame,320,False,None)[i]: exif_transpose and full RGB conversion before thumbnail512 LANCZOS; final bilinear resize/pad/normalize.",
+    "grayscale_thumbnail_before_rgb": "Keep original source mode through exif_transpose and thumbnail512 LANCZOS(default reducing_gap2), then convert RGB; final transforms unchanged.",
+    "lazy_thumbnail_gap2": "Call source.thumbnail512 LANCZOS reducing_gap2 before exif_transpose/RGB, permitting automatic JPEG draft decode; final transforms unchanged.",
+    "lazy_thumbnail_gap3": "Same lazy thumbnail with reducing_gap3; final transforms unchanged.",
+    "explicit_draft_512": "Call source.draft(None,(512,512)) before exif_transpose, thumbnail512 LANCZOS in source mode, then RGB; final transforms unchanged."
+  },
+  "results": {
+    "dataset_baseline": {
+      "latency_ms": {
+        "mean": 49.578857500030914,
+        "p50": 50.88484999942011,
+        "p90": 59.474469999986475,
+        "p95": 61.53815499928896,
+        "max": 67.15199999962351,
+        "min": 26.196499999059597,
+        "observations": 120
+      },
+      "per_image_median_latency_ms": {
+        "mean": 49.10219750017859,
+        "p50": 51.17025000072317,
+        "p90": 57.801189999008784,
+        "p95": 58.68991000224923,
+        "max": 62.046499999269145,
+        "min": 27.548500002012588,
+        "observations": 40
+      }
+    },
+    "grayscale_thumbnail_before_rgb": {
+      "latency_ms": {
+        "mean": 27.079944166810794,
+        "p50": 28.275800001210882,
+        "p90": 33.423359998778324,
+        "p95": 35.02512000231945,
+        "max": 45.136799999454524,
+        "min": 15.164700002060272,
+        "observations": 120
+      },
+      "per_image_median_latency_ms": {
+        "mean": 26.540879999902245,
+        "p50": 28.00579999893671,
+        "p90": 32.30691000062507,
+        "p95": 33.449764998476894,
+        "max": 37.720900003478164,
+        "min": 15.436999998200918,
+        "observations": 40
+      },
+      "normalized_tensor_mae": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "min": 0.0,
+        "observations": 40
+      },
+      "pixel_mae_0_255": {
+        "mean": 0.0,
+        "p50": 0.0,
+        "p90": 0.0,
+        "p95": 0.0,
+        "max": 0.0,
+        "min": 0.0,
+        "observations": 40
+      },
+      "maximum_pixel_abs_difference_0_255": 0.0,
+      "exact_equal_images": 40,
+      "baseline_mean_speedup": 1.8308330768567393
+    },
+    "lazy_thumbnail_gap2": {
+      "latency_ms": {
+        "mean": 21.86712166679475,
+        "p50": 22.01575000071898,
+        "p90": 26.72278999853006,
+        "p95": 27.687669999613718,
+        "max": 33.26469999956316,
+        "min": 14.6863999980269,
+        "observations": 120
+      },
+      "per_image_median_latency_ms": {
+        "mean": 21.543040000233304,
+        "p50": 21.65710000008403,
+        "p90": 26.320620003389195,
+        "p95": 27.050545003112347,
+        "max": 27.67669999957434,
+        "min": 15.21850000062841,
+        "observations": 40
+      },
+      "normalized_tensor_mae": {
+        "mean": 0.001396879879757762,
+        "p50": 0.001950082485564053,
+        "p90": 0.0022151664132252337,
+        "p95": 0.0024289094028063117,
+        "max": 0.002519160509109497,
+        "min": 0.0,
+        "observations": 40
+      },
+      "pixel_mae_0_255": {
+        "mean": 0.08049487434327603,
+        "p50": 0.11237304657697678,
+        "p90": 0.12764845043420792,
+        "p95": 0.1399653226137161,
+        "max": 0.14516600966453552,
+        "min": 0.0,
+        "observations": 40
+      },
+      "maximum_pixel_abs_difference_0_255": 2.000002145767212,
+      "exact_equal_images": 13,
+      "baseline_mean_speedup": 2.267278622925324
+    },
+    "lazy_thumbnail_gap3": {
+      "latency_ms": {
+        "mean": 29.527163333356537,
+        "p50": 31.62730000076408,
+        "p90": 38.256029998956365,
+        "p95": 41.126009998515656,
+        "max": 47.79200000120909,
+        "min": 15.093399997567758,
+        "observations": 120
+      },
+      "per_image_median_latency_ms": {
+        "mean": 28.884407500299858,
+        "p50": 30.80575000058161,
+        "p90": 36.65874000180338,
+        "p95": 38.272544999017555,
+        "max": 40.22839999743155,
+        "min": 15.26709999961895,
+        "observations": 40
+      },
+      "normalized_tensor_mae": {
+        "mean": 0.0018468927184585482,
+        "p50": 0.0024051921209320426,
+        "p90": 0.002912515262141824,
+        "p95": 0.003084848599974066,
+        "max": 0.00323143950663507,
+        "min": 0.0,
+        "observations": 40
+      },
+      "pixel_mae_0_255": {
+        "mean": 0.10642675925046205,
+        "p50": 0.13859863579273224,
+        "p90": 0.1678330108523369,
+        "p95": 0.17776368111371993,
+        "max": 0.18621093034744263,
+        "min": 0.0,
+        "observations": 40
+      },
+      "maximum_pixel_abs_difference_0_255": 5.000010967254639,
+      "exact_equal_images": 11,
+      "baseline_mean_speedup": 1.6790931434995715
+    },
+    "explicit_draft_512": {
+      "latency_ms": {
+        "mean": 17.847399166475952,
+        "p50": 17.449900000428897,
+        "p90": 23.137420000784918,
+        "p95": 24.47356000120635,
+        "max": 28.55759999874863,
+        "min": 10.55600000108825,
+        "observations": 120
+      },
+      "per_image_median_latency_ms": {
+        "mean": 17.538747499384044,
+        "p50": 17.449900000428897,
+        "p90": 22.530989999359008,
+        "p95": 23.48074000001361,
+        "max": 26.559399997495348,
+        "min": 10.967899997922359,
+        "observations": 40
+      },
+      "normalized_tensor_mae": {
+        "mean": 0.005882396060042083,
+        "p50": 0.0036734997993335128,
+        "p90": 0.009190621413290502,
+        "p95": 0.012463776580989357,
+        "max": 0.04167808219790459,
+        "min": 0.0021368376910686493,
+        "observations": 40
+      },
+      "pixel_mae_0_255": {
+        "mean": 0.33897167034447195,
+        "p50": 0.21168456226587296,
+        "p90": 0.5296074330806734,
+        "p95": 0.7182221770286558,
+        "max": 2.401689052581787,
+        "min": 0.12313477694988251,
+        "observations": 40
+      },
+      "maximum_pixel_abs_difference_0_255": 159.0,
+      "exact_equal_images": 0,
+      "baseline_mean_speedup": 2.7779317892524324
+    }
+  },
+  "sources": [
+    {
+      "url": "https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.draft",
+      "supports": "draft configures JPEG loading before decoding; it has no effect after pixels are loaded."
+    },
+    {
+      "url": "https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.thumbnail",
+      "supports": "thumbnail supports reducing_gap and automatically calls draft where possible; larger reducing_gap trades speed for fidelity."
+    },
+    {
+      "url": "https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#jpeg",
+      "supports": "JPEG draft can decode at one-half, one-quarter or one-eighth dimensions."
+    }
+  ],
+  "recommendations": [
+    "Keep the active training and validation preprocessing unchanged for this run.",
+    "If the grayscale-thumbnail candidate is pixel-identical across broader validation, consider deploying only that source-mode-preserving operation order, with explicit handling/fallback for non-L/RGB modes.",
+    "JPEG draft candidates change pixels and may subtly change geometry; evaluate complete Study-level validation predictions before using them with a trained checkpoint.",
+    "Confirm T4 latency including raw JPEG decoding, resize/normalize, device transfer, forward pass and output conversion at batch size one."
+  ],
+  "images": [
+    {
+      "frame_index": 0,
+      "dicom_id": "pic_033055",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11813\\study_20000\\pic_033055.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          47.086800001125084,
+          51.039800000580726,
+          47.8136000019731
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          24.876200001017423,
+          25.49199999702978,
+          23.83700000063982
+        ],
+        "lazy_thumbnail_gap2": [
+          18.10710000063409,
+          17.57240000006277,
+          17.724400000588503
+        ],
+        "lazy_thumbnail_gap3": [
+          28.9928999991389,
+          28.076700000383426,
+          27.4463999994623
+        ],
+        "explicit_draft_512": [
+          15.511099998548161,
+          14.743599997018464,
+          13.400800002273172
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0016962174559012055,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.09774412959814072,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0020046515855938196,
+          "normalized_tensor_max_abs": 0.035014137625694275,
+          "pixel_mae_0_255": 0.11551757901906967,
+          "pixel_max_abs_0_255": 2.0000076293945312,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0030075705144554377,
+          "normalized_tensor_max_abs": 0.12254905700683594,
+          "pixel_mae_0_255": 0.1733105629682541,
+          "pixel_max_abs_0_255": 7.000002384185791,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 36,
+      "dicom_id": "pic_033094",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11832\\study_20025\\pic_033094.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          50.67280000002938,
+          50.986700000066776,
+          53.04019999675802
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          27.98379999876488,
+          28.405900000507245,
+          27.196500002901303
+        ],
+        "lazy_thumbnail_gap2": [
+          20.690399996965425,
+          20.45680000082939,
+          20.91870000003837
+        ],
+        "lazy_thumbnail_gap3": [
+          32.53499999846099,
+          31.144299999141367,
+          32.175200001802295
+        ],
+        "explicit_draft_512": [
+          16.86340000014752,
+          17.528000000311295,
+          17.39390000147978
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.001963301096111536,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.11313477158546448,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0023471489548683167,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.13525390625,
+          "pixel_max_abs_0_255": 3.0000057220458984,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003420567139983177,
+          "normalized_tensor_max_abs": 0.1050419807434082,
+          "pixel_mae_0_255": 0.1971093714237213,
+          "pixel_max_abs_0_255": 5.999999523162842,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 72,
+      "dicom_id": "pic_033137",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11851\\study_20051\\pic_033137.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          46.721100003196625,
+          49.25520000324468,
+          53.60209999707877
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          23.814399999537272,
+          25.63169999848469,
+          30.508399999234825
+        ],
+        "lazy_thumbnail_gap2": [
+          16.681100001733284,
+          17.79259999966598,
+          26.02630000183126
+        ],
+        "lazy_thumbnail_gap3": [
+          26.315700000850484,
+          25.775900001463015,
+          34.01940000185277
+        ],
+        "explicit_draft_512": [
+          14.411500000278465,
+          14.051000001927605,
+          15.943099999276455
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002099893521517515,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12100586295127869,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0025825416669249535,
+          "normalized_tensor_max_abs": 0.05252104997634888,
+          "pixel_mae_0_255": 0.14881835877895355,
+          "pixel_max_abs_0_255": 3.0000030994415283,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00906473957002163,
+          "normalized_tensor_max_abs": 0.560224175453186,
+          "pixel_mae_0_255": 0.5223535299301147,
+          "pixel_max_abs_0_255": 32.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2539,
+        2834
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 109,
+      "dicom_id": "pic_033174",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11866\\study_20074\\pic_033174.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          39.0231000019412,
+          35.22979999979725,
+          32.28339999986929
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          16.282699998555472,
+          15.856400001212023,
+          16.407700000854675
+        ],
+        "lazy_thumbnail_gap2": [
+          20.52410000032978,
+          16.627800003334414,
+          15.490599998884136
+        ],
+        "lazy_thumbnail_gap3": [
+          16.032799998356495,
+          15.26709999961895,
+          15.093399997567758
+        ],
+        "explicit_draft_512": [
+          12.611499998456566,
+          10.738299999502487,
+          10.976099998515565
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.008297553285956383,
+          "normalized_tensor_max_abs": 0.7703080177307129,
+          "pixel_mae_0_255": 0.4781445562839508,
+          "pixel_max_abs_0_255": 44.0,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1302,
+        1885
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 145,
+      "dicom_id": "pic_033217",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11827\\study_20099\\pic_033217.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          53.866499998548534,
+          58.54600000020582,
+          57.7698999986751
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          30.83919999698992,
+          32.180300000618445,
+          29.090799998812145
+        ],
+        "lazy_thumbnail_gap2": [
+          22.105399999418296,
+          21.78049999929499,
+          22.703600003296742
+        ],
+        "lazy_thumbnail_gap3": [
+          33.76650000063819,
+          31.92729999864241,
+          32.95790000265697
+        ],
+        "explicit_draft_512": [
+          17.505899999378016,
+          17.2586999979103,
+          21.16330000353628
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0018897514091804624,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.10889647901058197,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002231740625575185,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.1286035180091858,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.007006705738604069,
+          "normalized_tensor_max_abs": 0.5777311325073242,
+          "pixel_mae_0_255": 0.40375974774360657,
+          "pixel_max_abs_0_255": 33.00000762939453,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2539,
+        3050
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 182,
+      "dicom_id": "pic_033256",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11847\\study_20120\\pic_033256.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          64.94399999792222,
+          58.56490000223857,
+          57.73789999875589
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          30.808899999101413,
+          31.999300001189113,
+          30.12309999758145
+        ],
+        "lazy_thumbnail_gap2": [
+          23.15489999818965,
+          25.274600000557257,
+          23.516299999755574
+        ],
+        "lazy_thumbnail_gap3": [
+          35.78840000045602,
+          34.730100000160746,
+          41.33720000027097
+        ],
+        "explicit_draft_512": [
+          19.640700000309153,
+          20.310399999289075,
+          23.0864000004658
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0021397185046225786,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12330076843500137,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002627959242090583,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.15143553912639618,
+          "pixel_max_abs_0_255": 3.0000133514404297,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.004019640851765871,
+          "normalized_tensor_max_abs": 0.1050419956445694,
+          "pixel_mae_0_255": 0.2316308617591858,
+          "pixel_max_abs_0_255": 6.0,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 218,
+      "dicom_id": "pic_033296",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11883\\study_20144\\pic_033296.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          67.15199999962351,
+          59.428399999887915,
+          61.0651000024518
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          34.21860000162269,
+          39.234900003066286,
+          33.404500001779525
+        ],
+        "lazy_thumbnail_gap2": [
+          25.732699999934994,
+          27.145899999595713,
+          27.042700003221398
+        ],
+        "lazy_thumbnail_gap3": [
+          41.2668000026315,
+          38.92510000150651,
+          38.06899999835878
+        ],
+        "explicit_draft_512": [
+          28.03679999851738,
+          26.559399997495348,
+          23.45890000287909
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002142091281712055,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12343748658895493,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0026391444262117147,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.15208007395267487,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.013574485667049885,
+          "normalized_tensor_max_abs": 1.0154061317443848,
+          "pixel_mae_0_255": 0.7822265625,
+          "pixel_max_abs_0_255": 58.00000762939453,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3049,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 255,
+      "dicom_id": "pic_033336",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11912\\study_20169\\pic_033336.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          47.573100000590784,
+          56.01179999939632,
+          47.376899998198496
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          20.196800000121584,
+          20.600200001354096,
+          21.088699999381788
+        ],
+        "lazy_thumbnail_gap2": [
+          19.777400000748457,
+          24.57919999869773,
+          22.461900000052992
+        ],
+        "lazy_thumbnail_gap3": [
+          21.323699998902157,
+          19.408000000112224,
+          19.36559999739984
+        ],
+        "explicit_draft_512": [
+          13.058500000624917,
+          14.315099997475045,
+          14.145900000585243
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003143315203487873,
+          "normalized_tensor_max_abs": 0.10504209995269775,
+          "pixel_mae_0_255": 0.18113280832767487,
+          "pixel_max_abs_0_255": 6.000006198883057,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1890,
+        2006
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 291,
+      "dicom_id": "pic_033381",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11884\\study_20195\\pic_033381.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          60.08510000174283,
+          62.99929999659071,
+          62.046499999269145
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          36.866599999484606,
+          32.59049999905983,
+          32.28339999986929
+        ],
+        "lazy_thumbnail_gap2": [
+          27.896100000361912,
+          27.19960000104038,
+          22.913500000868225
+        ],
+        "lazy_thumbnail_gap3": [
+          33.760299997084076,
+          47.79200000120909,
+          40.22839999743155
+        ],
+        "explicit_draft_512": [
+          18.69019999867305,
+          23.101700000552228,
+          18.4198999995715
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0020119387190788984,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.1159374937415123,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0024069715291261673,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.1387011706829071,
+          "pixel_max_abs_0_255": 3.0000057220458984,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0035069966688752174,
+          "normalized_tensor_max_abs": 0.12254905700683594,
+          "pixel_mae_0_255": 0.20208986103534698,
+          "pixel_max_abs_0_255": 7.000002384185791,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3056,
+        2544
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 327,
+      "dicom_id": "pic_033420",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11929\\study_20216\\pic_033420.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          58.082800002011936,
+          61.511399999290006,
+          52.98949999996694
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          31.836099999054568,
+          31.473099999857368,
+          33.262199998716824
+        ],
+        "lazy_thumbnail_gap2": [
+          22.783100001106504,
+          23.070799998095026,
+          22.09180000136257
+        ],
+        "lazy_thumbnail_gap3": [
+          35.81089999715914,
+          34.06200000245008,
+          34.10200000143959
+        ],
+        "explicit_draft_512": [
+          20.61649999814108,
+          18.85019999826909,
+          18.826800001988886
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002042612759396434,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.1177050843834877,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0025511900894343853,
+          "normalized_tensor_max_abs": 0.05252104997634888,
+          "pixel_mae_0_255": 0.14701174199581146,
+          "pixel_max_abs_0_255": 3.000002384185791,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003937109373509884,
+          "normalized_tensor_max_abs": 0.12254902720451355,
+          "pixel_mae_0_255": 0.22687499225139618,
+          "pixel_max_abs_0_255": 7.000001430511475,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 364,
+      "dicom_id": "pic_033457",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11919\\study_20239\\pic_033457.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          27.629400003206683,
+          29.1471000018646,
+          26.196499999059597
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          15.436999998200918,
+          16.783000002760673,
+          15.164700002060272
+        ],
+        "lazy_thumbnail_gap2": [
+          15.69779999772436,
+          15.357800002675503,
+          14.6863999980269
+        ],
+        "lazy_thumbnail_gap3": [
+          17.920499998581363,
+          18.387000000075204,
+          17.460099999880185
+        ],
+        "explicit_draft_512": [
+          12.552700001833728,
+          12.92009999815491,
+          11.63049999740906
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0027416732627898455,
+          "normalized_tensor_max_abs": 0.03501397371292114,
+          "pixel_mae_0_255": 0.1579882800579071,
+          "pixel_max_abs_0_255": 1.9999991655349731,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0021368376910686493,
+          "normalized_tensor_max_abs": 0.03501391410827637,
+          "pixel_mae_0_255": 0.12313477694988251,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1760,
+        2140
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 400,
+      "dicom_id": "pic_033496",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11939\\study_20263\\pic_033496.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          45.937299997603986,
+          47.13180000180728,
+          47.209899999870686
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          26.24650000143447,
+          21.532599999773083,
+          23.50529999966966
+        ],
+        "lazy_thumbnail_gap2": [
+          20.893799999612384,
+          19.72340000065742,
+          21.331700001610443
+        ],
+        "lazy_thumbnail_gap3": [
+          19.408599997404963,
+          20.504000000073574,
+          20.550500001263572
+        ],
+        "explicit_draft_512": [
+          13.84140000300249,
+          14.991500000178348,
+          15.434500000992557
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0033826057333499193,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.19492186605930328,
+          "pixel_max_abs_0_255": 2.000002145767212,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2022,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 437,
+      "dicom_id": "pic_033534",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11827\\study_20289\\pic_033534.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          35.12609999961569,
+          33.147800000733696,
+          33.61800000129733
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          15.841299999010516,
+          17.0259000005899,
+          15.974099998857128
+        ],
+        "lazy_thumbnail_gap2": [
+          15.591899998980807,
+          15.043499999592314,
+          15.29830000072252
+        ],
+        "lazy_thumbnail_gap3": [
+          15.719299997726921,
+          15.481800000998192,
+          15.17740000053891
+        ],
+        "explicit_draft_512": [
+          11.723999999958323,
+          10.55600000108825,
+          10.967899997922359
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.008748002350330353,
+          "normalized_tensor_max_abs": 0.5252100229263306,
+          "pixel_mae_0_255": 0.504101574420929,
+          "pixel_max_abs_0_255": 30.0,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1459,
+        2021
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 473,
+      "dicom_id": "pic_033575",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11847\\study_20312\\pic_033575.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          51.03159999998752,
+          38.882400000147754,
+          40.22879999683937
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          17.625200001930352,
+          18.18980000098236,
+          18.089200002577854
+        ],
+        "lazy_thumbnail_gap2": [
+          17.271100001380546,
+          17.681099998299032,
+          16.494100000272738
+        ],
+        "lazy_thumbnail_gap3": [
+          16.410100000939565,
+          18.20389999920735,
+          17.003100001602434
+        ],
+        "explicit_draft_512": [
+          14.09589999821037,
+          11.232900000322843,
+          12.049299999489449
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.002793530933558941,
+          "normalized_tensor_max_abs": 0.05252113938331604,
+          "pixel_mae_0_255": 0.1609765589237213,
+          "pixel_max_abs_0_255": 3.0000083446502686,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1736,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 510,
+      "dicom_id": "pic_033614",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11951\\study_20335\\pic_033614.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          53.09789999955683,
+          51.35380000137957,
+          50.26019999786513
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          28.410999999323394,
+          28.12199999971199,
+          28.33459999965271
+        ],
+        "lazy_thumbnail_gap2": [
+          21.44860000043991,
+          23.148099997342797,
+          20.929099999193568
+        ],
+        "lazy_thumbnail_gap3": [
+          30.70789999765111,
+          30.355499999132007,
+          32.75949999806471
+        ],
+        "explicit_draft_512": [
+          16.956699997535907,
+          17.879699997138232,
+          20.247500000550644
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002046171808615327,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.11791016161441803,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002468319609761238,
+          "normalized_tensor_max_abs": 0.0525212287902832,
+          "pixel_mae_0_255": 0.14223633706569672,
+          "pixel_max_abs_0_255": 3.0000133514404297,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0036027466412633657,
+          "normalized_tensor_max_abs": 0.08753502368927002,
+          "pixel_mae_0_255": 0.2076074182987213,
+          "pixel_max_abs_0_255": 5.00000524520874,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 546,
+      "dicom_id": "pic_033652",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11957\\study_20361\\pic_033652.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          55.37530000219704,
+          54.345599997759564,
+          55.20219999743858
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          31.219899999996414,
+          29.81260000160546,
+          34.92820000246866
+        ],
+        "lazy_thumbnail_gap2": [
+          24.331299999175826,
+          23.489699997298885,
+          22.87140000044019
+        ],
+        "lazy_thumbnail_gap3": [
+          34.36650000003283,
+          34.85700000237557,
+          34.585000001243316
+        ],
+        "explicit_draft_512": [
+          20.658000001276378,
+          20.619499999156687,
+          19.754200002353173
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002042443258687854,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.11769531667232513,
+          "pixel_max_abs_0_255": 2.000002145767212,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0024545923806726933,
+          "normalized_tensor_max_abs": 0.035014137625694275,
+          "pixel_mae_0_255": 0.1414453238248825,
+          "pixel_max_abs_0_255": 2.0000076293945312,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0056604426354169846,
+          "normalized_tensor_max_abs": 0.5952380299568176,
+          "pixel_mae_0_255": 0.32618165016174316,
+          "pixel_max_abs_0_255": 33.999996185302734,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3050,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 582,
+      "dicom_id": "pic_033692",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11898\\study_20383\\pic_033692.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          51.64650000006077,
+          53.28179999924032,
+          58.42019999909098
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          26.992200000677258,
+          28.79400000165333,
+          30.38659999947413
+        ],
+        "lazy_thumbnail_gap2": [
+          21.00849999987986,
+          19.01960000031977,
+          21.93970000007539
+        ],
+        "lazy_thumbnail_gap3": [
+          30.257099999289494,
+          30.873299998347647,
+          33.060699999623466
+        ],
+        "explicit_draft_512": [
+          16.830399999889778,
+          17.64309999998659,
+          16.818699998111697
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0019144940888509154,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.1103222668170929,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002376297488808632,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.1369335949420929,
+          "pixel_max_abs_0_255": 3.0000057220458984,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00359783205203712,
+          "normalized_tensor_max_abs": 0.12254893779754639,
+          "pixel_mae_0_255": 0.20732420682907104,
+          "pixel_max_abs_0_255": 7.000001430511475,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3056,
+        2544
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 619,
+      "dicom_id": "pic_033730",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11868\\study_20407\\pic_033730.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          56.55539999861503,
+          40.52800000135903,
+          43.91340000074706
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          20.539500001177657,
+          19.500300000800053,
+          20.26049999767565
+        ],
+        "lazy_thumbnail_gap2": [
+          19.647900000563823,
+          21.401999998488463,
+          19.53760000105831
+        ],
+        "lazy_thumbnail_gap3": [
+          23.953800002345815,
+          19.98989999992773,
+          19.53249999860418
+        ],
+        "explicit_draft_512": [
+          14.284900000347989,
+          14.160399998218054,
+          14.53129999936209
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.002805393422022462,
+          "normalized_tensor_max_abs": 0.07002800703048706,
+          "pixel_mae_0_255": 0.16166014969348907,
+          "pixel_max_abs_0_255": 3.999999761581421,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1736,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 655,
+      "dicom_id": "pic_033768",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11903\\study_20432\\pic_033768.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          50.561399999423884,
+          54.14769999697455,
+          55.49149999933434
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          45.136799999454524,
+          29.922900001110975,
+          31.74859999853652
+        ],
+        "lazy_thumbnail_gap2": [
+          33.26469999956316,
+          23.323000001255423,
+          23.27069999955711
+        ],
+        "lazy_thumbnail_gap3": [
+          31.810799999220762,
+          34.99250000095344,
+          42.975799999112496
+        ],
+        "explicit_draft_512": [
+          17.370300000038696,
+          24.774900000920752,
+          21.40259999941918
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002202252857387066,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12690430879592896,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.00254271668381989,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.14652344584465027,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003799161408096552,
+          "normalized_tensor_max_abs": 0.19257700443267822,
+          "pixel_mae_0_255": 0.21892575919628143,
+          "pixel_max_abs_0_255": 11.000000953674316,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 692,
+      "dicom_id": "pic_033813",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11825\\study_20459\\pic_033813.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          60.638399998424575,
+          56.11000000135391,
+          51.768500001344364
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          31.69279999929131,
+          33.5499000029813,
+          32.27540000079898
+        ],
+        "lazy_thumbnail_gap2": [
+          25.536600001942134,
+          30.135799999698065,
+          24.748100000579143
+        ],
+        "lazy_thumbnail_gap3": [
+          35.94890000022133,
+          41.11859999829903,
+          35.1836000008916
+        ],
+        "explicit_draft_512": [
+          24.457700001221383,
+          23.72089999698801,
+          21.26499999940279
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002165477955713868,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.1247851699590683,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0026169440243393183,
+          "normalized_tensor_max_abs": 0.07002794742584229,
+          "pixel_mae_0_255": 0.15080077946186066,
+          "pixel_max_abs_0_255": 4.000000476837158,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00406844774261117,
+          "normalized_tensor_max_abs": 0.12254905700683594,
+          "pixel_mae_0_255": 0.23444336652755737,
+          "pixel_max_abs_0_255": 7.000002384185791,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3056,
+        2544
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 728,
+      "dicom_id": "pic_033852",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11852\\study_20481\\pic_033852.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          38.07070000038948,
+          37.747300000773976,
+          41.202600001270184
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          17.88200000009965,
+          17.638799999986077,
+          25.718500000948552
+        ],
+        "lazy_thumbnail_gap2": [
+          16.637500000797445,
+          16.90480000252137,
+          16.635200001474004
+        ],
+        "lazy_thumbnail_gap3": [
+          16.79349999903934,
+          16.726200003176928,
+          16.76710000174353
+        ],
+        "explicit_draft_512": [
+          12.242999997397419,
+          11.857099998451304,
+          12.447400000382913
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0024676418397575617,
+          "normalized_tensor_max_abs": 0.08753502368927002,
+          "pixel_mae_0_255": 0.14219728112220764,
+          "pixel_max_abs_0_255": 5.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1768,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 765,
+      "dicom_id": "pic_033891",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11988\\study_20504\\pic_033891.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          59.06920000052196,
+          53.98970000169356,
+          53.22209999940242
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          33.10810000039055,
+          31.029099998704623,
+          29.543100001319544
+        ],
+        "lazy_thumbnail_gap2": [
+          26.703299998189323,
+          24.935699999332428,
+          22.500600000057602
+        ],
+        "lazy_thumbnail_gap3": [
+          38.526599997567246,
+          35.28820000065025,
+          36.57550000207266
+        ],
+        "explicit_draft_512": [
+          22.506699999212287,
+          20.954400002665352,
+          26.998199999070494
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0017487532459199429,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.10077149420976639,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002190220635384321,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.12621094286441803,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0036147786304354668,
+          "normalized_tensor_max_abs": 0.10504209995269775,
+          "pixel_mae_0_255": 0.20830073952674866,
+          "pixel_max_abs_0_255": 6.000004768371582,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 801,
+      "dicom_id": "pic_033927",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11868\\study_20525\\pic_033927.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          45.061699998768745,
+          55.93319999752566,
+          56.16150000059861
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          23.760500000207685,
+          31.442099996638717,
+          23.49799999865354
+        ],
+        "lazy_thumbnail_gap2": [
+          22.88820000103442,
+          23.018200001388323,
+          24.69120000023395
+        ],
+        "lazy_thumbnail_gap3": [
+          27.915099999518134,
+          22.862900001200614,
+          23.401500002364628
+        ],
+        "explicit_draft_512": [
+          16.022799998609116,
+          16.49579999866546,
+          16.578600003413158
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.004082174971699715,
+          "normalized_tensor_max_abs": 0.03501415252685547,
+          "pixel_mae_0_255": 0.23523437976837158,
+          "pixel_max_abs_0_255": 2.0000083446502686,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1970,
+        1970
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 838,
+      "dicom_id": "pic_033964",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11918\\study_20549\\pic_033964.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          27.3042999979225,
+          27.653599998302525,
+          27.548500002012588
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          15.785700001288205,
+          22.74770000076387,
+          15.867699999944307
+        ],
+        "lazy_thumbnail_gap2": [
+          14.927799998986302,
+          15.21850000062841,
+          19.971400000940775
+        ],
+        "lazy_thumbnail_gap3": [
+          17.71559999906458,
+          17.752499999915017,
+          18.968199998198543
+        ],
+        "explicit_draft_512": [
+          12.878100002126303,
+          13.00460000129533,
+          13.899500001571141
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.003048412734642625,
+          "normalized_tensor_max_abs": 0.08753514289855957,
+          "pixel_mae_0_255": 0.17566408216953278,
+          "pixel_max_abs_0_255": 5.000010967254639,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0022520767524838448,
+          "normalized_tensor_max_abs": 0.03501415252685547,
+          "pixel_mae_0_255": 0.12977540493011475,
+          "pixel_max_abs_0_255": 2.0000083446502686,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1760,
+        2140
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 874,
+      "dicom_id": "pic_034005",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11827\\study_20575\\pic_034005.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          42.556100001093,
+          42.603400001098635,
+          43.93379999964964
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          24.537099998269696,
+          26.044900001579663,
+          26.860200003284262
+        ],
+        "lazy_thumbnail_gap2": [
+          19.652599999972153,
+          20.356999997602543,
+          21.514699998078868
+        ],
+        "lazy_thumbnail_gap3": [
+          33.341700000164565,
+          29.937800001789583,
+          28.559099999256432
+        ],
+        "explicit_draft_512": [
+          15.603499999997439,
+          17.181000002892688,
+          16.248200001427904
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0024561176542192698,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.14153319597244263,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.003136367304250598,
+          "normalized_tensor_max_abs": 0.05252113938331604,
+          "pixel_mae_0_255": 0.18073241412639618,
+          "pixel_max_abs_0_255": 3.0000083446502686,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.012405318208038807,
+          "normalized_tensor_max_abs": 1.0504202842712402,
+          "pixel_mae_0_255": 0.7148535251617432,
+          "pixel_max_abs_0_255": 60.00000762939453,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2539,
+        2582
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 910,
+      "dicom_id": "pic_034044",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11837\\study_20597\\pic_034044.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          43.82840000107535,
+          44.42200000266894,
+          44.14739999992889
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          24.873800000932533,
+          24.096100001770537,
+          26.302700000087498
+        ],
+        "lazy_thumbnail_gap2": [
+          19.01249999718857,
+          19.46200000020326,
+          19.58580000064103
+        ],
+        "lazy_thumbnail_gap3": [
+          30.738200002815574,
+          30.989599999884376,
+          29.60470000107307
+        ],
+        "explicit_draft_512": [
+          16.369000000850065,
+          16.393099998822436,
+          16.48679999925662
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002519160509109497,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.14516600966453552,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0030821370892226696,
+          "normalized_tensor_max_abs": 0.07002806663513184,
+          "pixel_mae_0_255": 0.1776074320077896,
+          "pixel_max_abs_0_255": 4.000002861022949,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.04167808219790459,
+          "normalized_tensor_max_abs": 2.7836132049560547,
+          "pixel_mae_0_255": 2.401689052581787,
+          "pixel_max_abs_0_255": 159.0,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2633,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 947,
+      "dicom_id": "pic_034089",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11829\\study_20627\\pic_034089.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          50.703900000371505,
+          51.7470000013418,
+          49.4012000017392
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          31.220400000165682,
+          30.08419999969192,
+          29.368399998929817
+        ],
+        "lazy_thumbnail_gap2": [
+          24.495400000887457,
+          24.034599999140482,
+          22.937100002309307
+        ],
+        "lazy_thumbnail_gap3": [
+          32.82760000001872,
+          33.638700002484256,
+          32.60420000151498
+        ],
+        "explicit_draft_512": [
+          21.077200002764584,
+          22.56370000031893,
+          20.51980000032927
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0023313884157687426,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.13434572517871857,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002897415542975068,
+          "normalized_tensor_max_abs": 0.05252102017402649,
+          "pixel_mae_0_255": 0.1669628918170929,
+          "pixel_max_abs_0_255": 3.0000030994415283,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.005468772724270821,
+          "normalized_tensor_max_abs": 0.192577064037323,
+          "pixel_mae_0_255": 0.31513673067092896,
+          "pixel_max_abs_0_255": 11.00000286102295,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2784,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 983,
+      "dicom_id": "pic_034128",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11836\\study_20651\\pic_034128.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          55.43839999882039,
+          49.76840000017546,
+          60.405799998989096
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          39.76440000042203,
+          29.376499998761574,
+          29.640200002177153
+        ],
+        "lazy_thumbnail_gap2": [
+          24.396700002398575,
+          23.549999998067506,
+          23.041799999191426
+        ],
+        "lazy_thumbnail_gap3": [
+          37.9270000012184,
+          33.29750000193599,
+          34.27289999672212
+        ],
+        "explicit_draft_512": [
+          22.998099997494137,
+          19.584300000133226,
+          20.431500000995584
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0021717483177781105,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12514649331569672,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0026088093873113394,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.1503320336341858,
+          "pixel_max_abs_0_255": 3.0000057220458984,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.008820196613669395,
+          "normalized_tensor_max_abs": 0.7352941632270813,
+          "pixel_mae_0_255": 0.5082616806030273,
+          "pixel_max_abs_0_255": 42.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        3050,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1020,
+      "dicom_id": "pic_034166",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_12022\\study_20672\\pic_034166.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          48.869700000068406,
+          46.973299999081064,
+          46.67019999760669
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          31.190300000162097,
+          26.27560000109952,
+          26.90449999863631
+        ],
+        "lazy_thumbnail_gap2": [
+          19.677199998113792,
+          19.344299998920178,
+          20.155199999862816
+        ],
+        "lazy_thumbnail_gap3": [
+          29.773400001431582,
+          30.498000000079628,
+          34.94420000060927
+        ],
+        "explicit_draft_512": [
+          16.760200000135228,
+          18.844599999283673,
+          20.86780000172439
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0018134904094040394,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.10450195521116257,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002156326547265053,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.12425781786441803,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003208900336176157,
+          "normalized_tensor_max_abs": 0.08753502368927002,
+          "pixel_mae_0_255": 0.18491210043430328,
+          "pixel_max_abs_0_255": 5.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1056,
+      "dicom_id": "pic_034206",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_12026\\study_20694\\pic_034206.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          49.322799997753464,
+          48.55699999825447,
+          46.59890000039013
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          26.330000000598375,
+          27.360799998859875,
+          34.133099998143734
+        ],
+        "lazy_thumbnail_gap2": [
+          20.04529999976512,
+          20.723300000099698,
+          30.886699998518452
+        ],
+        "lazy_thumbnail_gap3": [
+          32.06279999722028,
+          34.59400000065216,
+          32.58310000092024
+        ],
+        "explicit_draft_512": [
+          17.713699999148957,
+          17.759599999408238,
+          17.131200002040714
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.001995500409975648,
+          "normalized_tensor_max_abs": 0.03501391410827637,
+          "pixel_mae_0_255": 0.1149902418255806,
+          "pixel_max_abs_0_255": 2.000002145767212,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002407988766208291,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.1387597620487213,
+          "pixel_max_abs_0_255": 2.000002145767212,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003511571791023016,
+          "normalized_tensor_max_abs": 0.08753502368927002,
+          "pixel_mae_0_255": 0.20235350728034973,
+          "pixel_max_abs_0_255": 5.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1093,
+      "dicom_id": "pic_034244",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11895\\study_20719\\pic_034244.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          50.74809999860008,
+          54.415200000221375,
+          59.217900001385715
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          30.445399999734946,
+          31.033600000228034,
+          30.379600000742357
+        ],
+        "lazy_thumbnail_gap2": [
+          25.258699999540113,
+          26.525100001890678,
+          26.54159999656258
+        ],
+        "lazy_thumbnail_gap3": [
+          35.49660000135191,
+          38.41649999958463,
+          35.62600000077509
+        ],
+        "explicit_draft_512": [
+          22.749600000679493,
+          22.623099997872487,
+          23.54429999832064
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002427477389574051,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.13988280296325684,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.00323143950663507,
+          "normalized_tensor_max_abs": 0.07002800703048706,
+          "pixel_mae_0_255": 0.18621093034744263,
+          "pixel_max_abs_0_255": 4.0,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.010323558002710342,
+          "normalized_tensor_max_abs": 0.7352941036224365,
+          "pixel_mae_0_255": 0.5948925614356995,
+          "pixel_max_abs_0_255": 42.000003814697266,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2690,
+        2539
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1129,
+      "dicom_id": "pic_034281",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11829\\study_20744\\pic_034281.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          45.42829999991227,
+          44.31740000291029,
+          48.8169000018388
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          29.889699999330333,
+          25.29119999962859,
+          28.027799999108538
+        ],
+        "lazy_thumbnail_gap2": [
+          18.299100000149338,
+          18.641599999682512,
+          19.799199999397388
+        ],
+        "lazy_thumbnail_gap3": [
+          28.171999998448882,
+          28.29819999897154,
+          30.479499997454695
+        ],
+        "explicit_draft_512": [
+          15.563900000415742,
+          15.300300001399592,
+          21.949900001345668
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0018126427894458175,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.10445313155651093,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002135481918230653,
+          "normalized_tensor_max_abs": 0.035014137625694275,
+          "pixel_mae_0_255": 0.12305663526058197,
+          "pixel_max_abs_0_255": 2.0000076293945312,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0031038294546306133,
+          "normalized_tensor_max_abs": 0.08753514289855957,
+          "pixel_mae_0_255": 0.17885743081569672,
+          "pixel_max_abs_0_255": 5.000007629394531,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1165,
+      "dicom_id": "pic_034324",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11904\\study_20769\\pic_034324.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          52.97199999768054,
+          62.588000000687316,
+          48.78889999963576
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          23.315099999308586,
+          23.07170000131009,
+          22.594300000491785
+        ],
+        "lazy_thumbnail_gap2": [
+          22.172900000441587,
+          21.628800001053605,
+          21.829199999046978
+        ],
+        "lazy_thumbnail_gap3": [
+          26.62400000190246,
+          32.83700000247336,
+          21.83060000243131
+        ],
+        "explicit_draft_512": [
+          16.963999998552026,
+          19.686100000399165,
+          16.120000000228174
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00361901568248868,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.20854492485523224,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2022,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1202,
+      "dicom_id": "pic_034368",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_12037\\study_20796\\pic_034368.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          53.93570000160253,
+          48.913500002527144,
+          53.200700000161305
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          29.411899999104207,
+          31.73400000014226,
+          28.217000002769055
+        ],
+        "lazy_thumbnail_gap2": [
+          21.48500000112108,
+          21.07840000098804,
+          22.158499999932246
+        ],
+        "lazy_thumbnail_gap3": [
+          33.554599998751655,
+          31.4438000023074,
+          43.17889999947511
+        ],
+        "explicit_draft_512": [
+          19.238599998061545,
+          18.318499998713378,
+          18.76839999749791
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002051086165010929,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.1181933730840683,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0025574599858373404,
+          "normalized_tensor_max_abs": 0.05252110958099365,
+          "pixel_mae_0_255": 0.1473730504512787,
+          "pixel_max_abs_0_255": 3.0000133514404297,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.003753743600100279,
+          "normalized_tensor_max_abs": 0.10504209995269775,
+          "pixel_mae_0_255": 0.2163086235523224,
+          "pixel_max_abs_0_255": 6.000004768371582,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1238,
+      "dicom_id": "pic_034420",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11891\\study_20826\\pic_034420.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          48.910900000919355,
+          48.049799999716925,
+          65.28170000092359
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          23.910199997771997,
+          27.466500003356487,
+          27.718199999071658
+        ],
+        "lazy_thumbnail_gap2": [
+          26.393400003144052,
+          26.297900003555696,
+          24.798000002192566
+        ],
+        "lazy_thumbnail_gap3": [
+          21.136100000148872,
+          22.6221999982954,
+          28.440399997634813
+        ],
+        "explicit_draft_512": [
+          15.502999998716405,
+          16.82039999650442,
+          23.71349999884842
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0033954859245568514,
+          "normalized_tensor_max_abs": 0.10504209995269775,
+          "pixel_mae_0_255": 0.19566407799720764,
+          "pixel_max_abs_0_255": 6.000006198883057,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2022,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1275,
+      "dicom_id": "pic_034458",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11827\\study_20845\\pic_034458.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          59.88910000087344,
+          55.49629999950412,
+          57.260800000221934
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          37.720900003478164,
+          37.94539999944391,
+          33.86870000031195
+        ],
+        "lazy_thumbnail_gap2": [
+          29.061900000669993,
+          27.67669999957434,
+          25.621500000852393
+        ],
+        "lazy_thumbnail_gap3": [
+          46.639599997433834,
+          37.40789999937988,
+          36.254400001780596
+        ],
+        "explicit_draft_512": [
+          25.081499999942025,
+          23.468100000172853,
+          21.989099997881567
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.002125652739778161,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12249022722244263,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002522888593375683,
+          "normalized_tensor_max_abs": 0.03501400351524353,
+          "pixel_mae_0_255": 0.14538085460662842,
+          "pixel_max_abs_0_255": 2.0000009536743164,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0060922494158148766,
+          "normalized_tensor_max_abs": 0.4201680123806,
+          "pixel_mae_0_255": 0.3510644733905792,
+          "pixel_max_abs_0_255": 23.999998092651367,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2539,
+        3050
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1311,
+      "dicom_id": "pic_034500",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11877\\study_20868\\pic_034500.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          55.16830000124173,
+          53.215100000670645,
+          50.71769999995013
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          29.46410000004107,
+          29.1402000002563,
+          31.394400000863243
+        ],
+        "lazy_thumbnail_gap2": [
+          24.558699999033706,
+          24.941600000602193,
+          26.898200001596706
+        ],
+        "lazy_thumbnail_gap3": [
+          35.92869999920367,
+          35.938000000896864,
+          37.50660000150674
+        ],
+        "explicit_draft_512": [
+          19.62410000123782,
+          22.086100001615705,
+          18.747300000541145
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.00193686387501657,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.11161132156848907,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002304781461134553,
+          "normalized_tensor_max_abs": 0.03501403331756592,
+          "pixel_mae_0_255": 0.1328124850988388,
+          "pixel_max_abs_0_255": 2.000004291534424,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00340226455591619,
+          "normalized_tensor_max_abs": 0.10504209995269775,
+          "pixel_mae_0_255": 0.19605466723442078,
+          "pixel_max_abs_0_255": 6.0000128746032715,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1348,
+      "dicom_id": "pic_034540",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_12053\\study_20894\\pic_034540.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          51.28039999908651,
+          52.380699999048375,
+          54.34469999818248
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          30.278800000814954,
+          29.729899997619214,
+          29.56099999937578
+        ],
+        "lazy_thumbnail_gap2": [
+          28.038199998263735,
+          22.393900002498413,
+          22.864700000354787
+        ],
+        "lazy_thumbnail_gap3": [
+          36.880999999993946,
+          33.24209999846062,
+          30.902000002242858
+        ],
+        "explicit_draft_512": [
+          19.291599997814046,
+          19.917999998142477,
+          18.77529999910621
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0021080279257148504,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.12147462368011475,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002600674983114004,
+          "normalized_tensor_max_abs": 0.0525209903717041,
+          "pixel_mae_0_255": 0.14986328780651093,
+          "pixel_max_abs_0_255": 2.999999761581421,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0037279839161783457,
+          "normalized_tensor_max_abs": 0.07002806663513184,
+          "pixel_mae_0_255": 0.21482419967651367,
+          "pixel_max_abs_0_255": 4.000002861022949,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2544,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1384,
+      "dicom_id": "pic_034577",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11874\\study_20917\\pic_034577.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          37.5618999969447,
+          38.60290000011446,
+          37.48650000125053
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          17.674899998382898,
+          18.13350000156788,
+          18.571299999166513
+        ],
+        "lazy_thumbnail_gap2": [
+          16.73529999970924,
+          17.245699997147312,
+          17.983599998842692
+        ],
+        "lazy_thumbnail_gap3": [
+          17.15859999967506,
+          17.2195000013744,
+          19.023900000320282
+        ],
+        "explicit_draft_512": [
+          12.19630000196048,
+          11.986500001512468,
+          14.689200001157587
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.0028831802774220705,
+          "normalized_tensor_max_abs": 0.05252104997634888,
+          "pixel_mae_0_255": 0.16614258289337158,
+          "pixel_max_abs_0_255": 3.000002384185791,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        1736,
+        2022
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    },
+    {
+      "frame_index": 1421,
+      "dicom_id": "pic_034616",
+      "image_path": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first\\valid\\subject_11816\\study_20937\\pic_034616.jpg",
+      "timings_ms": {
+        "dataset_baseline": [
+          54.51590000302531,
+          53.77230000158306,
+          50.78299999877345
+        ],
+        "grayscale_thumbnail_before_rgb": [
+          32.13260000120499,
+          33.409299998311326,
+          34.24530000120285
+        ],
+        "lazy_thumbnail_gap2": [
+          25.38060000006226,
+          27.08310000161873,
+          22.793300002376782
+        ],
+        "lazy_thumbnail_gap3": [
+          38.23819999888656,
+          40.91580000022077,
+          33.308299996861024
+        ],
+        "explicit_draft_512": [
+          22.258599998167483,
+          28.55759999874863,
+          19.14539999779663
+        ]
+      },
+      "differences": {
+        "grayscale_thumbnail_before_rgb": {
+          "normalized_tensor_mae": 0.0,
+          "normalized_tensor_max_abs": 0.0,
+          "pixel_mae_0_255": 0.0,
+          "pixel_max_abs_0_255": 0.0,
+          "exact_equal": true
+        },
+        "lazy_thumbnail_gap2": {
+          "normalized_tensor_mae": 0.0020209206268191338,
+          "normalized_tensor_max_abs": 0.017507314682006836,
+          "pixel_mae_0_255": 0.116455078125,
+          "pixel_max_abs_0_255": 1.0000227689743042,
+          "exact_equal": false
+        },
+        "lazy_thumbnail_gap3": {
+          "normalized_tensor_mae": 0.002403412712737918,
+          "normalized_tensor_max_abs": 0.035014137625694275,
+          "pixel_mae_0_255": 0.13849610090255737,
+          "pixel_max_abs_0_255": 2.0000076293945312,
+          "exact_equal": false
+        },
+        "explicit_draft_512": {
+          "normalized_tensor_mae": 0.00791133288294077,
+          "normalized_tensor_max_abs": 0.33263298869132996,
+          "pixel_mae_0_255": 0.45588868856430054,
+          "pixel_max_abs_0_255": 18.999998092651367,
+          "exact_equal": false
+        }
+      },
+      "width_height": [
+        2394,
+        3056
+      ],
+      "source_mode": "L",
+      "exif_orientation": null
+    }
+  ],
+  "initial_single_pass_baseline_ms": {
+    "sample_count": 40,
+    "mean": 59.85787999970853,
+    "p50": 61.412399998516776,
+    "p90": 70.59368999907747,
+    "p95": 74.79544499819893,
+    "max": 84.23169999878155,
+    "note": "Separate first diagnostic pass before the balanced 3-repeat comparison; retained to show load-sensitive latency variation."
+  },
+  "fixed_sample": {
+    "frame_indices": [
+      0,
+      36,
+      72,
+      109,
+      145,
+      182,
+      218,
+      255,
+      291,
+      327,
+      364,
+      400,
+      437,
+      473,
+      510,
+      546,
+      582,
+      619,
+      655,
+      692,
+      728,
+      765,
+      801,
+      838,
+      874,
+      910,
+      947,
+      983,
+      1020,
+      1056,
+      1093,
+      1129,
+      1165,
+      1202,
+      1238,
+      1275,
+      1311,
+      1348,
+      1384,
+      1421
+    ],
+    "dicom_ids": [
+      "pic_033055",
+      "pic_033094",
+      "pic_033137",
+      "pic_033174",
+      "pic_033217",
+      "pic_033256",
+      "pic_033296",
+      "pic_033336",
+      "pic_033381",
+      "pic_033420",
+      "pic_033457",
+      "pic_033496",
+      "pic_033534",
+      "pic_033575",
+      "pic_033614",
+      "pic_033652",
+      "pic_033692",
+      "pic_033730",
+      "pic_033768",
+      "pic_033813",
+      "pic_033852",
+      "pic_033891",
+      "pic_033927",
+      "pic_033964",
+      "pic_034005",
+      "pic_034044",
+      "pic_034089",
+      "pic_034128",
+      "pic_034166",
+      "pic_034206",
+      "pic_034244",
+      "pic_034281",
+      "pic_034324",
+      "pic_034368",
+      "pic_034420",
+      "pic_034458",
+      "pic_034500",
+      "pic_034540",
+      "pic_034577",
+      "pic_034616"
+    ],
+    "source_modes": [
+      "L"
+    ],
+    "exif_orientations": [
+      "None"
+    ]
+  },
+  "recommended_candidate": {
+    "name": "grayscale_thumbnail_before_rgb",
+    "observed_exact_equal_images": 40,
+    "observed_images": 40,
+    "normalized_tensor_mae": 0.0,
+    "mean_ms": 27.079944166810794,
+    "p95_ms": 35.02512000231945,
+    "mean_speedup": 1.8308330768567393,
+    "deployment_scope": "Candidate for future source-mode L/RGB preprocessing after active training finishes and whole-valid parity is checked; no implementation was changed."
+  },
+  "end_to_end_measurement_contract": {
+    "existing_entrypoint": "cxr.benchmark.inference_probe(checkpoint, data_root, split=\"valid\", samples=40)",
+    "existing_cli": "python -m cxr.benchmark --checkpoint <best.pt> --data-root cxr_first --split valid --samples 40 --output artifacts/t4_end_to_end.json",
+    "timed_input": "Original JPEG file path from the 40 fixed, uniformly selected valid CSV rows; cache_root=None.",
+    "timed_output": "CPU NumPy vector of ten sigmoid probabilities for one image.",
+    "included": [
+      "Image.open/read and JPEG decode",
+      "EXIF handling and aspect-ratio resize/pad",
+      "to_tensor and ImageNet normalization",
+      "Batch dimension creation and CPU-to-GPU transfer",
+      "AMP float16 model forward, float32 sigmoid",
+      "GPU-to-CPU copy and NumPy conversion",
+      "Final CUDA synchronization"
+    ],
+    "excluded": [
+      "Python imports",
+      "Checkpoint deserialization/model construction",
+      "Model transfer to device",
+      "Dataset CSV parsing",
+      "Warmup forward passes",
+      "Multi-image Study aggregation"
+    ],
+    "settings": {
+      "batch_size": 1,
+      "torch_cpu_threads": 4,
+      "warmup_forwards_current_entrypoint": 10,
+      "gpu_device_required_for_certification": "NVIDIA T4",
+      "model_state": "eval + inference_mode",
+      "preprocessing_cache": null
+    },
+    "additional_reporting_recommended": [
+      "Per-image elapsed durations and Dicom IDs, not only aggregate quantiles.",
+      "Mean, median, p90, p95, maximum and checkpoint file size.",
+      "Python/PyTorch/Pillow/CUDA/GPU driver versions and input-size settings.",
+      "Preprocessing implementation hash or named version, with parity evidence if changed.",
+      "Separate cold-disk and warm-file-cache results when storage behavior matters.",
+      "Record per-image endpoint and Study-level multi-image endpoint separately if organizer wording is ambiguous."
+    ],
+    "status": "No GPU inference measurements performed in this probe; current laptop CPU numbers do not certify T4 latency."
+  }
+}

@@ -1,0 +1,8 @@
+# Competition inference environment. CUDA wheels: https://download.pytorch.org/whl/cu128
+torch==2.10.0
+torchvision==0.25.0
+numpy>=2.0,<3
+pandas>=2.2,<4
+Pillow>=11,<13
+scikit-learn>=1.6,<2
+matplotlib>=3.9,<4

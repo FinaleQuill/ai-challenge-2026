@@ -1,0 +1,39 @@
+# Local environments and editor state
+.venv/
+.venv-*/
+.idea/
+.vscode/
+
+# Competition data, caches, checkpoints and run workspace
+cxr_first/
+cache/
+runs/
+outputs/
+信息文件/
+
+# Local tool runtimes and caches
+tools/python/
+tools/uv/
+tools/uv-cache/
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Runtime logs and transient files
+*.log
+*.tmp
+*.partial
+
+# Secrets and local credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key

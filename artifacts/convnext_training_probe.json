@@ -1,0 +1,10 @@
+[
+  {
+    "batch_size": 8,
+    "peak_allocated_mib": 1364.49853515625,
+    "peak_reserved_mib": 1472.0,
+    "step_ms": 56.4157000007981,
+    "images_per_second": 141.80449768214922,
+    "status": "ok"
+  }
+]

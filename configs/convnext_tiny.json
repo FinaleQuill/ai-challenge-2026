@@ -1,0 +1,22 @@
+{
+  "data_root": "cxr_first/cxr_first",
+  "cache_root": "cache/images512",
+  "run_dir": "runs/convnext_tiny_320_seed43",
+  "model": "convnext_tiny",
+  "image_size": 320,
+  "batch_size": 12,
+  "num_workers": 4,
+  "epochs": 12,
+  "lr": 0.0005,
+  "backbone_lr": 0.00005,
+  "weight_decay": 0.01,
+  "seed": 43,
+  "amp": true,
+  "accumulation": 2,
+  "dropout": 0.1,
+  "warmup_epochs": 1,
+  "early_stopping_patience": 4,
+  "pos_weight": false,
+  "study_weighted_loss": true,
+  "pretrained": true
+}

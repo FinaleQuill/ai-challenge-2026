@@ -1,0 +1,23 @@
+{
+  "data_root": "cxr_first/cxr_first",
+  "cache_root": "cache/images512",
+  "run_dir": "runs/densenet121_320_seed42",
+  "model": "densenet121",
+  "image_size": 320,
+  "batch_size": 12,
+  "num_workers": 4,
+  "epochs": 12,
+  "lr": 0.0006,
+  "backbone_lr": 0.00006,
+  "weight_decay": 0.0001,
+  "seed": 42,
+  "amp": true,
+  "accumulation": 2,
+  "dropout": 0.0,
+  "warmup_epochs": 1,
+  "early_stopping_patience": 4,
+  "pos_weight": false,
+  "freeze_bn": false,
+  "study_weighted_loss": true,
+  "pretrained": true
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "batch_size": 4,
+    "peak_allocated_mib": 638.890625,
+    "peak_reserved_mib": 670.0,
+    "step_ms": 130.29404999906546,
+    "images_per_second": 30.699790205528878,
+    "status": "ok"
+  },
+  {
+    "batch_size": 8,
+    "peak_allocated_mib": 1170.72265625,
+    "peak_reserved_mib": 1264.0,
+    "step_ms": 276.8073999995977,
+    "images_per_second": 28.900961462777467,
+    "status": "ok"
+  },
+  {
+    "batch_size": 12,
+    "peak_allocated_mib": 1696.4033203125,
+    "peak_reserved_mib": 1820.0,
+    "step_ms": 396.80670000052487,
+    "images_per_second": 30.241424854933467,
+    "status": "ok"
+  }
+]

@@ -1,0 +1,182 @@
+{
+  "pooling_comparison": {
+    "mean": {
+      "aggregation": "mean",
+      "macro_auc": 0.8011423464249645,
+      "macro_f1": 0.3559638323375806,
+      "per_class_auc": [
+        0.7595309381237525,
+        0.8416189912540278,
+        0.780188780148671,
+        0.7427957908827247,
+        0.8645745675549322,
+        0.7698361416240038,
+        0.7724136053151597,
+        0.7336738390205028,
+        0.8850680621548735,
+        0.8617227481709984
+      ],
+      "per_class_f1": [
+        0.0,
+        0.20833333333333334,
+        0.07407407407407407,
+        0.12658227848101267,
+        0.4918032786885246,
+        0.4107142857142857,
+        0.4602739726027397,
+        0.3425076452599388,
+        0.7094339622641509,
+        0.7359154929577465
+      ],
+      "positive_studies": [
+        24,
+        37,
+        46,
+        68,
+        115,
+        177,
+        193,
+        214,
+        260,
+        306
+      ],
+      "auc_classes_evaluated": 10,
+      "study_count": 859,
+      "threshold": 0.5,
+      "class_names": [
+        "Enlarged Cardiomediastinum",
+        "Pneumothorax",
+        "Consolidation",
+        "Pneumonia",
+        "Edema",
+        "Cardiomegaly",
+        "Atelectasis",
+        "Lung Opacity",
+        "Pleural Effusion",
+        "No Finding"
+      ]
+    },
+    "max": {
+      "aggregation": "max",
+      "macro_auc": 0.7935677625838388,
+      "macro_f1": 0.38288520194847614,
+      "per_class_auc": [
+        0.741367265469062,
+        0.8396955349510093,
+        0.7713246697684368,
+        0.736567635903919,
+        0.8602910238429172,
+        0.76175505740842,
+        0.7727442468375112,
+        0.7173947692530609,
+        0.8782425837935021,
+        0.8562948386105496
+      ],
+      "per_class_f1": [
+        0.0,
+        0.3508771929824561,
+        0.07272727272727272,
+        0.16470588235294117,
+        0.5,
+        0.43523316062176165,
+        0.4914004914004914,
+        0.3825136612021858,
+        0.697841726618705,
+        0.7335526315789473
+      ],
+      "positive_studies": [
+        24,
+        37,
+        46,
+        68,
+        115,
+        177,
+        193,
+        214,
+        260,
+        306
+      ],
+      "auc_classes_evaluated": 10,
+      "study_count": 859,
+      "threshold": 0.5,
+      "class_names": [
+        "Enlarged Cardiomediastinum",
+        "Pneumothorax",
+        "Consolidation",
+        "Pneumonia",
+        "Edema",
+        "Cardiomegaly",
+        "Atelectasis",
+        "Lung Opacity",
+        "Pleural Effusion",
+        "No Finding"
+      ]
+    },
+    "mean_max": {
+      "aggregation": "mean_max",
+      "macro_auc": 0.7981521951444208,
+      "macro_f1": 0.3694120694837422,
+      "per_class_auc": [
+        0.7523453093812374,
+        0.8409613993555599,
+        0.7762580886678433,
+        0.7403974864281995,
+        0.8627980364656381,
+        0.7664645360107362,
+        0.7731293469635439,
+        0.72595812504528,
+        0.8823969436239888,
+        0.8608126795021807
+      ],
+      "per_class_f1": [
+        0.0,
+        0.3018867924528302,
+        0.07407407407407407,
+        0.12345679012345678,
+        0.4980237154150198,
+        0.428169014084507,
+        0.4742268041237113,
+        0.36627906976744184,
+        0.6961325966850829,
+        0.7318718381112985
+      ],
+      "positive_studies": [
+        24,
+        37,
+        46,
+        68,
+        115,
+        177,
+        193,
+        214,
+        260,
+        306
+      ],
+      "auc_classes_evaluated": 10,
+      "study_count": 859,
+      "threshold": 0.5,
+      "class_names": [
+        "Enlarged Cardiomediastinum",
+        "Pneumothorax",
+        "Consolidation",
+        "Pneumonia",
+        "Edema",
+        "Cardiomegaly",
+        "Atelectasis",
+        "Lung Opacity",
+        "Pleural Effusion",
+        "No Finding"
+      ]
+    }
+  },
+  "patient_bootstrap_mean_pooling": {
+    "unit": "patient",
+    "requested_repeats": 200,
+    "valid_repeats": 200,
+    "macro_auc_percentile_95_interval": [
+      0.7612194230386276,
+      0.8396355486320843
+    ],
+    "note": "Descriptive validation uncertainty; model selection used this same validation set."
+  }
+}

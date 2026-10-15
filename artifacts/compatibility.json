@@ -1,0 +1,57 @@
+{
+  "timestamp_utc": "2026-10-15T13:52:31.930893+00:00",
+  "versions": {
+    "python": "3.12.15",
+    "torch": "2.10.0+cpu",
+    "torchvision": "0.25.0+cpu",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6",
+    "Pillow": "12.3.0",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2"
+  },
+  "executable": "E:\\PycharmCodes\\计挑人工智能赛道\\.venv-competition\\Scripts\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "scope": "Windows CPU dependency/checkpoint compatibility; target T4 latency remains unverified",
+  "official_sources": [
+    "https://docs.astral.sh/uv/guides/install-python/",
+    "https://pytorch.org/get-started/previous-versions/"
+  ],
+  "unittest": {
+    "tests_run": 15,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "successful": true,
+    "log": "E:\\PycharmCodes\\计挑人工智能赛道\\artifacts\\compatibility_unittest.log"
+  },
+  "checkpoints": [
+    {
+      "path": "E:\\PycharmCodes\\计挑人工智能赛道\\runs\\convnext_tiny_320_seed43\\best.pt",
+      "model": "convnext_tiny",
+      "image_size": 320,
+      "strict_weights_only_load": true,
+      "finite_forward": true,
+      "output_shape": [
+        1,
+        10
+      ],
+      "probabilities": [
+        0.002452902030199766,
+        0.00027970116934739053,
+        0.0011769342236220837,
+        0.026441816240549088,
+        0.010339949280023575,
+        0.07428286969661713,
+        0.010632483288645744,
+        0.071791872382164,
+        0.0030225729569792747,
+        0.7975596785545349
+      ],
+      "sha256": "1d3da90179423741c6e2b327f3f68dc7631056332394d646df0476220daa3313",
+      "elapsed_seconds": 0.6879999999946449
+    }
+  ],
+  "cuda_initialized": false,
+  "status": "passed"
+}

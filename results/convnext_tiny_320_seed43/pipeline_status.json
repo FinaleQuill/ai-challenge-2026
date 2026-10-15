@@ -1,0 +1,13 @@
+{
+  "pid": 24184,
+  "config": "E:\\PycharmCodes\\计挑人工智能赛道\\configs\\convnext_tiny.json",
+  "started_at": "2026-10-15T13:13:16.524714+00:00",
+  "status": "complete",
+  "stage": "complete",
+  "child_pid": null,
+  "elapsed_seconds": 2565.792701482773,
+  "selected_aggregation": "mean",
+  "selection_note": "Pooling selected on official validation; not an independent test estimate",
+  "submission": "E:\\PycharmCodes\\计挑人工智能赛道\\runs\\convnext_tiny_320_seed43\\outputs\\submission.csv",
+  "bundle": "E:\\PycharmCodes\\计挑人工智能赛道\\runs\\convnext_tiny_320_seed43\\outputs\\inference_bundle.zip"
+}

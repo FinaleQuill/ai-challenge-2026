@@ -1,0 +1,9 @@
+{
+  "mode": "positive",
+  "rows": 2101,
+  "expected_studies": 1414,
+  "represented_studies": 1158,
+  "threshold": 0.5,
+  "official_scoring_contract_confirmed": false,
+  "note": "Official rules have not clarified omitted probabilities or the F1 threshold. Full preserves AUC information; positive follows the threshold example. Keep complete probabilities and confirm the final upload convention."
+}

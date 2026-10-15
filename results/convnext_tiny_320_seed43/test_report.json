@@ -1,0 +1,57 @@
+{
+  "checkpoints": [
+    "E:\\PycharmCodes\\计挑人工智能赛道\\runs\\convnext_tiny_320_seed43\\best.pt"
+  ],
+  "checkpoint_sha256": [
+    "1d3da90179423741c6e2b327f3f68dc7631056332394d646df0476220daa3313"
+  ],
+  "aggregation": "mean",
+  "split": "test",
+  "metrics": {
+    "aggregation": "mean"
+  },
+  "configs": [
+    {
+      "model": "convnext_tiny",
+      "pretrained": true,
+      "dropout": 0.1,
+      "image_size": 320,
+      "batch_size": 12,
+      "valid_batch_size": null,
+      "num_workers": 4,
+      "cpu_threads": 4,
+      "epochs": 12,
+      "lr": 0.0005,
+      "backbone_lr": 5e-05,
+      "weight_decay": 0.01,
+      "seed": 43,
+      "amp": true,
+      "accumulation": 2,
+      "optimizer": "adamw",
+      "scheduler": "cosine",
+      "warmup_epochs": 1,
+      "min_lr_ratio": 0.01,
+      "gradient_clip": 1.0,
+      "pos_weight": false,
+      "pos_weight_clip": 10.0,
+      "study_weighted_loss": true,
+      "aggregation": "mean",
+      "freeze_bn": false,
+      "freeze_backbone": false,
+      "channels_last": true,
+      "cudnn_benchmark": true,
+      "deterministic": false,
+      "early_stopping_patience": 4,
+      "min_delta": 1e-05,
+      "log_every": 100,
+      "log_interval_seconds": 30.0,
+      "max_train_samples": null,
+      "max_valid_samples": null,
+      "smoke_steps": null,
+      "device": "auto",
+      "data_root": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first",
+      "cache_root": "E:\\PycharmCodes\\计挑人工智能赛道\\cache\\images512",
+      "run_dir": "E:\\PycharmCodes\\计挑人工智能赛道\\runs\\convnext_tiny_320_seed43"
+    }
+  ]
+}

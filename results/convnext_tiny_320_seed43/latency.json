@@ -1,0 +1,11 @@
+{
+  "device": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "samples": 40,
+  "batch_size": 1,
+  "original_decode_and_preprocessing_included": true,
+  "median_ms": 32.85224999854108,
+  "p95_ms": 40.26531500203418,
+  "max_ms": 44.6012000029441,
+  "checkpoint_mib": 106.21992778778076,
+  "official_T4_latency_verified": false
+}

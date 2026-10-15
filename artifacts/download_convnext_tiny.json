@@ -1,0 +1,57 @@
+{
+  "model": "convnext_tiny",
+  "weight_enum": "ConvNeXt_Tiny_Weights.IMAGENET1K_V1",
+  "official_url": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth",
+  "expected_sha256_prefix": "983f1562",
+  "cache_path": "C:\\Users\\16683\\.cache\\torch\\hub\\checkpoints\\convnext_tiny-983f1562.pth",
+  "timestamp_utc": "2026-10-15T13:10:01.590725+00:00",
+  "attempts": [
+    {
+      "url": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth?cachebust=9e76ff7ece0c4694bb613544b83ecd87",
+      "attempt": 1,
+      "http_status": 200,
+      "headers": {
+        "Content-Length": "114419221",
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "ETag": "\"b5f239cea81edbebbcc862c84f8d6d5e-7\"",
+        "X-Cache": "Hit from cloudfront",
+        "X-Amz-Cf-Pop": "HKG61-P1"
+      },
+      "bytes": 111832450,
+      "sha256": "bdbd396d23d3173c6bb308f476ba187102641e5dd30a927299955dd0c6f337bd",
+      "elapsed_seconds": 25.85245439999926,
+      "status": "failed",
+      "error": "RuntimeError: Truncated response: expected 114419221 bytes, got 111832450"
+    },
+    {
+      "url": "https://download.pytorch.org/models/convnext_tiny-983f1562.pth?cachebust=3c9b6799fdb0413aa72a9fc52fb2fac4",
+      "attempt": 2,
+      "http_status": 200,
+      "headers": {
+        "Content-Length": "114419221",
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "ETag": "\"b5f239cea81edbebbcc862c84f8d6d5e-7\"",
+        "X-Cache": "Hit from cloudfront",
+        "X-Amz-Cf-Pop": "HKG61-P1"
+      },
+      "bytes": 114419221,
+      "sha256": "983f1562536e84ff750a1576fb08e54de751dbf2e17c0d8a4a13704341fdcd3d",
+      "elapsed_seconds": 41.603392600001825,
+      "status": "verified"
+    }
+  ],
+  "status": "verified_download",
+  "sha256": "983f1562536e84ff750a1576fb08e54de751dbf2e17c0d8a4a13704341fdcd3d",
+  "bytes": 114419221,
+  "cpu_validation": {
+    "official_enum_load": true,
+    "forward_shape": [
+      1,
+      1000
+    ],
+    "forward_finite": true,
+    "cuda_initialized": false,
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128"
+  }
+}

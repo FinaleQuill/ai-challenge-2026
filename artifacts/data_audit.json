@@ -1,0 +1,154 @@
+{
+  "data_root": "E:\\PycharmCodes\\计挑人工智能赛道\\cxr_first\\cxr_first",
+  "created_at": "2026-10-15T12:52:56.609535+00:00",
+  "class_order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "splits": {
+    "train": {
+      "images": 30344,
+      "patients": 11055,
+      "studies": 18513,
+      "labeled": true,
+      "missing_images": 0,
+      "missing_examples": [],
+      "images_per_study": {
+        "1": 8507,
+        "2": 8369,
+        "3": 1465,
+        "4": 160,
+        "5": 9,
+        "6": 2,
+        "7": 1
+      },
+      "views": {
+        "AP": 12152,
+        "PA": 7604,
+        "LATERAL": 6554,
+        "LL": 2831,
+        "": 1202,
+        "PA LLD": 1
+      },
+      "inconsistent_studies": 0,
+      "inconsistent_study_examples": [],
+      "class_positive_images": [
+        894,
+        1238,
+        1265,
+        2293,
+        3220,
+        5590,
+        5649,
+        6703,
+        6637,
+        12649
+      ],
+      "class_positive_studies": [
+        622,
+        900,
+        942,
+        1436,
+        2404,
+        3885,
+        3968,
+        4508,
+        4654,
+        6683
+      ]
+    },
+    "valid": {
+      "images": 1422,
+      "patients": 228,
+      "studies": 859,
+      "labeled": true,
+      "missing_images": 0,
+      "missing_examples": [],
+      "images_per_study": {
+        "1": 391,
+        "2": 380,
+        "3": 81,
+        "4": 7
+      },
+      "views": {
+        "AP": 584,
+        "PA": 364,
+        "LATERAL": 284,
+        "LL": 151,
+        "": 39
+      },
+      "inconsistent_studies": 0,
+      "inconsistent_study_examples": [],
+      "class_positive_images": [
+        35,
+        57,
+        63,
+        102,
+        158,
+        255,
+        297,
+        315,
+        375,
+        582
+      ],
+      "class_positive_studies": [
+        24,
+        37,
+        46,
+        68,
+        115,
+        177,
+        193,
+        214,
+        260,
+        306
+      ]
+    },
+    "test": {
+      "images": 2218,
+      "patients": 136,
+      "studies": 1414,
+      "labeled": false,
+      "missing_images": 0,
+      "missing_examples": [],
+      "images_per_study": {
+        "1": 775,
+        "2": 496,
+        "3": 122,
+        "4": 20,
+        "5": 1
+      },
+      "views": {
+        "AP": 1090,
+        "PA": 402,
+        "LATERAL": 370,
+        "LL": 217,
+        "": 139
+      }
+    }
+  },
+  "patient_intersections": {
+    "train_valid": {
+      "count": 0,
+      "examples": []
+    },
+    "train_test": {
+      "count": 0,
+      "examples": []
+    },
+    "valid_test": {
+      "count": 0,
+      "examples": []
+    }
+  },
+  "errors": [],
+  "ok": true
+}
